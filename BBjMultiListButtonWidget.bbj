@@ -1,0 +1,246 @@
+use ::BBjWidget/BBjWidget.bbj::BBjWidget
+
+rem /**
+rem  * A mutli-select combo box widget
+rem  */
+class public BBjMultiListButtonWidget extends BBjWidget
+
+    field private BBjChildWindow    frame!
+    field private BBjEditBox        editArea!
+    field private BBjButton         dropButton!
+    field private BBjStandardGrid   grid!
+
+    field private BBjNumber         h2
+
+    field private BBjNumber         f_open
+
+    field private BBjString         displayString$
+    
+    field private BBjString         selChangeEvent$
+    
+    field private BBjNumber f_showImageColumn = 0
+        
+    rem --------------------- constructors -------------------------------------
+    
+    rem /**
+    rem  * disabled default constructor
+    rem  */
+    method private BBjMultiListButtonWidget()
+    methodend
+
+    rem /**
+    rem  * The constructor that creates the widget on wnd!
+    rem * @param BBjWindow wnd!: parent window
+    rem * @param BBjInt id: the control ID
+    rem * @param BBjInt x: x-location
+    rem * @param BBjInt y: y-location
+    rem * @param BBjInt w: width
+    rem * @param BBjInt h: height
+    rem */
+    method public BBjMultiListButtonWidget(BBjWindow wnd!, BBjInt id!, BBjInt x!, BBjInt y!, BBjInt w!, BBjInt h!)
+        #super!.create(wnd!,id!,x!,y!,w!,h!)
+    methodend
+    
+    rem --------------------- event constant(s) -------------------------------------
+    
+    method public BBjNumber ON_LBEX_SELCHANGE()
+        methodret 100
+    methodend
+
+    rem ---------------------- methods from BBjWidget -------------------------------- 
+
+    rem /**
+    rem  * @Override
+    rem  * This method is called whenever the widget needs to be rendered
+    rem  * @param Boolean f_init!: if TRUE the control is rendered for the first time so this method has to perform initial rendering
+    rem  */
+    method public void redraw(Boolean f_init!)
+        if (f_init!) then
+            rem rendering for the first time
+            rem so have to initialize / create my controls
+            white! = BBjAPI().makeColor(255,255,255)
+    
+            #h2 = 300
+    
+            #f_open=false
+    
+            w = #getWidth()
+            h = #getHeight()
+            h2 = #h2
+            
+            #frame! = #getCanvas()
+            #editArea! = #frame!.addEditBox(100,0,0,w-h,h,"")
+            
+            #editArea!.setEditable(0)
+            #editArea!.setBackColor(white!)
+    
+            #dropButton! = #frame!.addButton(101,w-h,0,h,h,"")
+            #dropButton!.setFocusable(0)
+            img_down! = BBjAPI().getSysGui().getImageManager().loadImageFromBytes($89504E470D0A1A0A0000000D49484452000000100000001008060000001FF3FF61000001A24944415478DA6360A00588ADEDF98F0B1365407455CFFFEFFFFF636090385106845774FF9F7BF3EFFFE6FD8FE118C407891365405049E7FF29977EFEAFDA711F8E417C90385106F8E6B7FFEF3EF5E57FE1865B700CE283C48932C03DBBE57FC3C1F7FFD3965F8563101F244E94018E690DFFCB77BCFC1F33EF3C1C83F820710CC50E590D3CD689B5C780F83F0CFB372EFF9FB3E1C9FFC0A927E118C4078923AB03E9031B621C5ACEEF9CDE767AD2F14FFF37FFF8FF7FF3CFFFFFFDA69CFDEFDA7D048E417C9038481EA40EA41EA40FEE1210C730BCFCAC53C5B2FF61736FFE77683FFCDFBA691F1C3B761C018B3B962FF96F1051791245330C6887160A6905979EB72A5AFCDF7BCA95FFA675FBFE1B54EEFC6F56BF1FCCB72C5CF45F2BA8F4AC1236CD30A0E2992BAAE2577CC93867FE7FA79EF3FF75CA768269A3EC79FF55FD8ACE6ABB170A118C0590210A5E855775D2E7FDB76C3DFD5F276DCE7F05AF82F33244686604620E20E611D177569371CBBDAD9634EB3F90BEC4A7E5A0021287CA33E2328013884581580E88D5B9A5345DC4ED92F77148A8D883F8507151A83A300000A64934D68A5D62BC0000000049454E44AE426082$)
+            #dropButton!.setImage(img_down!)   
+            
+            #grid! = #frame!.addGrid(102,0,h+1,w,h2)
+            #grid!.setSelectionMode(#grid!.GRID_SELECT_ROW)
+    
+            #grid!.setNumColumns(3)
+            #grid!.setUserResizable(0)
+    
+            #grid!.setColumnWidth(0,20)
+            #grid!.setColumnWidth(1,(h+4)*#f_showImageColumn)
+            #grid!.setColumnWidth(2,w-28-h)
+            #grid!.setFitToGrid(#grid!.AUTO_RESIZE_LAST_COLUMN)
+            #grid!.setRowHeight(h+4)
+    
+            #grid!.setLineColor(white!)
+            #grid!.deselectAllCells()
+            #grid!.setNumRows(0)
+            #grid!.setVerticalScrollable(1)
+            #grid!.setHorizontalScrollable(0)
+            #grid!.setColumnStyle(0,#grid!.GRID_STYLE_UNCHECKED)
+            #grid!.setColumnAlignment(2,#grid!.GRID_ALIGN_LEFT)
+            
+            #grid!.setDefaultAlignment(#grid!.GRID_ALIGN_TOP)
+            #grid!.setEditClickCount(1)
+    
+            #dropButton!.setCallback(#dropButton!.ON_BUTTON_PUSH,#this!,"doOpenClose")
+            #editArea!.setCallback(#editArea!.ON_GAINED_FOCUS,#this!,"doOpen")
+    
+            #grid!.setCallback(#grid!.ON_GRID_MOUSE_DOWN,#this!,"gridMouseDown")
+            #grid!.setCallback(#grid!.ON_LOST_FOCUS,#this!,"gridLostFocus")
+            #grid!.setCallback(#grid!.ON_GRID_SELECT_ROW,#this!,"gridSelectRow")
+    
+            #grid!.deselectAllCells()
+    
+            #grid!.setFitToGrid(1)
+        FI
+
+
+        
+    methodend
+
+    method public void setShowImageColumn(BBjNumber f_show)
+        if (f_show) then
+            #f_showImageColumn=1
+        else
+            #f_showImageColumn=0
+        fi
+        if #grid! <> null() then
+            #grid!.setColumnWidth(0,20)
+            #grid!.setColumnWidth(1,(#getHeight()+4)*#f_showImageColumn)
+            #grid!.setColumnWidth(2,#getWidth()-28-#getHeight())
+            #grid!.setFitToGrid(#grid!.AUTO_RESIZE_LAST_COLUMN)            
+        fi
+    methodend
+
+
+    method public void doOpenClose(BBjEvent ev!)
+        BBjAPI().getSysGui().flushEvents()
+        if #f_open then
+            #doClose(ev!)
+        else
+            #doOpen(ev!)
+        fi  
+
+    methodend
+
+    method public void doClose(BBjEvent ev!)
+            #frame!.setSize(#getWidth(),#getHeight())
+            #f_open=0
+    methodend
+
+    method public void doOpen(BBjEvent ev!)
+           #frame!.setSize(#getWidth(),#getHeight()+#h2)
+           
+           #f_open=1
+           #grid!.deselectAllCells()
+    methodend
+
+    method public void setOpenHeight(BBjNumber h)
+        #h2= h
+        #grid!.setSize(#getWidth(),h)
+    methodend
+
+    method public void gridLostFocus(BBjEvent ev!)
+            #doClose(ev!)
+            BBjAPI().getSysGui().flushEvents()
+    methodend
+
+    
+    method public void gridSelectRow(BBjGridSelectRowEvent ev!)
+            #grid!.deselectAllCells()
+    methodend
+
+
+    method public void gridMouseDown(BBjGridMouseDownEvent ev!)
+            #grid!.deselectAllCells()
+            row=ev!.getRow()
+            state=#grid!.getCellState(row,0)
+            #grid!.setCellState(row,0,!state)
+            text$=#grid!.getCellText(row,2)
+
+            v!=new BBjVector()
+            #displayString$=""
+            for i=0 to #grid!.getNumRows()-1
+                if #grid!.getCellState(i,0) then
+                    if #displayString$>""
+                        #displayString$=#displayString$+", "
+                    fi
+                    #displayString$=#displayString$+#grid!.getCellText(i,2)
+                    v!.addItem(i)
+                fi
+            next i
+            #editArea!.setText(#displayString$)
+
+            declare BBjMultiListButtonWidgetSelChangeEvent ev!
+
+            ev! = new BBjMultiListButtonWidgetSelChangeEvent()
+            ev!.setSelected(v!)
+            ev!.setSelectedString(#displayString$)
+            ev!.setControl(#frame!)
+
+            #fireEvent(#ON_LBEX_SELCHANGE(),ev!)
+    methodend
+
+    method public void addItem(BBjString text$, BBjNumber f_checked)
+            #addItem(text$,f_checked,null())
+    methodend
+
+    method public void addItem(BBjString text$, BBjNumber f_checked, BBjString img$)
+            declare BBjImageManager myImageManager!
+            myImageManager!=BBjAPI().getSysGui().getImageManager()
+            img!=myImageManager!.loadImageFromFile(img$)
+            #addItem(text$,f_checked,img!)
+    methodend
+
+    method public void addItem(BBjString text$, BBjNumber f_checked, BBjImage img!)
+
+            rows=#grid!.getNumRows()
+            #grid!.setNumRows(rows+1)
+            #grid!.setCellState(rows,0,f_checked)
+
+            #grid!.setCellState(rows,0,f_checked)
+            #grid!.setCellImage(rows,1,img!)
+            #grid!.setCellText(rows,2,text$)
+
+            if f_checked then
+                if #displayString$>""
+                    #displayString$=#displayString$+", "
+                fi
+                #displayString$=#displayString$+text$
+            fi
+            
+            #editArea!.setText(#displayString$)
+            
+
+    methodend
+
+classend
+
+
+class public BBjMultiListButtonWidgetSelChangeEvent 
+
+    field public BBjVector      Selected!
+    field public BBjChildWindow Control!
+    field public BBjString      SelectedString$
+
+classend

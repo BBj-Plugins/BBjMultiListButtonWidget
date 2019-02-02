@@ -1,0 +1,14 @@
+{
+	"name":"BBjMultiListButtonWidget",
+	"description":"A combo box with multi-select.",
+	"version": "0.1alpha",
+	"author":"Basis",
+	"plugin_dependencies":[
+								{
+									"plugin_name"    : "BBjWidget",
+									"plugin_version" : "master",
+									"project_url"    : "https://github.com/BBj-Plugins/BBjWidget"
+								}
+							]
+}
+
