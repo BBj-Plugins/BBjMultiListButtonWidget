@@ -5,7 +5,7 @@ sysgui! = BBjAPI().openSysGui("X0")
 wnd!=sysgui!.addWindow(10,10,800,600,"")
 wnd!.setCallback(wnd!.ON_CLOSE,"byebye")
 
-
+print 'hide'
 gosub loadImages
 
 ce!  = wnd!.addCEdit(102,10,200,200,200,"Events (Languages)")
@@ -24,7 +24,7 @@ declare BBjMultiListButtonWidget lbex2!
 lbex2! = new BBjMultiListButtonWidget(wnd!,200,260,10,220,25)
 
 lbex2!.addItem("BMW",1,img_bmw!)
-lbex2!.addItem("Citroën",1,img_citroen!)
+lbex2!.addItem("CitroÃ«n",1,img_citroen!)
 lbex2!.addItem("Daimler",0,img_daimler!)
 lbex2!.addItem("Nissan",0,img_nissan!)
 lbex2!.addItem("Toyota",0,img_toyota!)
