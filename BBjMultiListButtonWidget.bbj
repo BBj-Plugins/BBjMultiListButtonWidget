@@ -132,7 +132,11 @@ class public BBjMultiListButtonWidget extends BBjWidget
         fi
     methodend
 
-
+    REM /**
+    REM  * 
+    REM  * Opens or closes the list depending on the state of f_open
+    REM  * 
+    REM  */
     method public void doOpenClose(BBjEvent ev!)
         BBjAPI().getSysGui().flushEvents()
         if #f_open then
@@ -142,12 +146,22 @@ class public BBjMultiListButtonWidget extends BBjWidget
         fi  
 
     methodend
-
+    
+    REM /**
+    REM  * 
+    REM  * Closes the list
+    REM  * 
+    REM  */
     method public void doClose(BBjEvent ev!)
             #frame!.setSize(#getWidth(),#getHeight())
             #f_open=0
     methodend
 
+    REM /**
+    REM  * 
+    REM  * Opens the list
+    REM  * 
+    REM  */
     method public void doOpen(BBjEvent ev!)
            #frame!.setSize(#getWidth(),#getHeight()+#h2)
            
@@ -170,7 +184,11 @@ class public BBjMultiListButtonWidget extends BBjWidget
             #grid!.deselectAllCells()
     methodend
 
-
+    REM /**
+    REM  * 
+    REM  * Sets the events in case of the MouseDownEvent
+    REM  * 
+    REM  */
     method public void gridMouseDown(BBjGridMouseDownEvent ev!)
             #grid!.deselectAllCells()
             row=ev!.getRow()
@@ -200,18 +218,45 @@ class public BBjMultiListButtonWidget extends BBjWidget
 
             #fireEvent(#ON_LBEX_SELCHANGE(),ev!)
     methodend
-
+    
+    REM /**
+    REM  * 
+    REM  * Uses the addItem function to add an item with the given text to the list
+    REM  * 
+    REM  * @param text$ the text with which the added item should be filled 
+    REM  * @param f_checked a number showing wether the box should be checked or not
+    REM  * 
+    REM  */
     method public void addItem(BBjString text$, BBjNumber f_checked)
             #addItem(text$,f_checked,null())
     methodend
 
+    REM /**
+    REM  * 
+    REM  * Uses the addItem function to add an item with the given text and the image from the link to the list
+    REM  * 
+    REM  * @param text$ the text with which the added item should be filled 
+    REM  * @param f_checked a number showing wether the box should be checked or not
+    REM  * @param img$ the link to the image file which should be added
+    REM  * 
+    REM  */
     method public void addItem(BBjString text$, BBjNumber f_checked, BBjString img$)
             declare BBjImageManager myImageManager!
             myImageManager!=BBjAPI().getSysGui().getImageManager()
             img!=myImageManager!.loadImageFromFile(img$)
             #addItem(text$,f_checked,img!)
     methodend
-
+    
+    
+    REM /**
+    REM  * 
+    REM  * Adds an item with the given text and image to the list
+    REM  * 
+    REM  * @param text$ the text with which the added item should be filled
+    REM  * @param f_checked a number showing wether the box should be checked or not
+    REM  * @param img! the image which is supposed to be added to the cell
+    REM  * 
+    REM  */
     method public void addItem(BBjString text$, BBjNumber f_checked, BBjImage img!)
 
             rows=#grid!.getNumRows()
