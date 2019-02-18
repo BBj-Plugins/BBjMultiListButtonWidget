@@ -69,14 +69,18 @@ class public BBjMultiListButtonWidget extends BBjWidget
             h2 = #h2
             
             #frame! = #getCanvas()
-            #editArea! = #frame!.addEditBox(100,0,0,w-h,h,"")
+            #editArea! = #frame!.addEditBox(100,0,0,w,h,"")
             
             #editArea!.setEditable(0)
             #editArea!.setBackColor(white!)
     
-            #dropButton! = #frame!.addButton(101,w-h,0,h,h,"")
+            #dropButton! = #frame!.addButton(101,w-h+1,1,h-2,h-2,"")
+            #dropButton!.setOpaque(0)
+            #dropButton!.setBackColor(BBjAPI().makeColor("WHITE"))
+            #dropButton!.setForeColor(BBjAPI().makeColor("WHITE"))
             #dropButton!.setFocusable(0)
-            img_down! = BBjAPI().getSysGui().getImageManager().loadImageFromBytes($89504E470D0A1A0A0000000D49484452000000100000001008060000001FF3FF61000001A24944415478DA6360A00588ADEDF98F0B1365407455CFFFEFFFFF636090385106845774FF9F7BF3EFFFE6FD8FE118C407891365405049E7FF29977EFEAFDA711F8E417C90385106F8E6B7FFEF3EF5E57FE1865B700CE283C48932C03DBBE57FC3C1F7FFD3965F8563101F244E94018E690DFFCB77BCFC1F33EF3C1C83F820710CC50E590D3CD689B5C780F83F0CFB372EFF9FB3E1C9FFC0A927E118C4078923AB03E9031B621C5ACEEF9CDE767AD2F14FFF37FFF8FF7FF3CFFFFFFDA69CFDEFDA7D048E417C9038481EA40EA41EA40FEE1210C730BCFCAC53C5B2FF61736FFE77683FFCDFBA691F1C3B761C018B3B962FF96F1051791245330C6887160A6905979EB72A5AFCDF7BCA95FFA675FBFE1B54EEFC6F56BF1FCCB72C5CF45F2BA8F4AC1236CD30A0E2992BAAE2577CC93867FE7FA79EF3FF75CA768269A3EC79FF55FD8ACE6ABB170A118C0590210A5E855775D2E7FDB76C3DFD5F276DCE7F05AF82F33244686604620E20E611D177569371CBBDAD9634EB3F90BEC4A7E5A0021287CA33E2328013884581580E88D5B9A5345DC4ED92F77148A8D883F8507151A83A300000A64934D68A5D62BC0000000049454E44AE426082$)
+            rem img_down! = BBjAPI().getSysGui().getImageManager().loadImageFromBytes($89504E470D0A1A0A0000000D49484452000000100000001008060000001FF3FF61000001A24944415478DA6360A00588ADEDF98F0B1365407455CFFFEFFFFF636090385106845774FF9F7BF3EFFFE6FD8FE118C407891365405049E7FF29977EFEAFDA711F8E417C90385106F8E6B7FFEF3EF5E57FE1865B700CE283C48932C03DBBE57FC3C1F7FFD3965F8563101F244E94018E690DFFCB77BCFC1F33EF3C1C83F820710CC50E590D3CD689B5C780F83F0CFB372EFF9FB3E1C9FFC0A927E118C4078923AB03E9031B621C5ACEEF9CDE767AD2F14FFF37FFF8FF7FF3CFFFFFFDA69CFDEFDA7D048E417C9038481EA40EA41EA40FEE1210C730BCFCAC53C5B2FF61736FFE77683FFCDFBA691F1C3B761C018B3B962FF96F1051791245330C6887160A6905979EB72A5AFCDF7BCA95FFA675FBFE1B54EEFC6F56BF1FCCB72C5CF45F2BA8F4AC1236CD30A0E2992BAAE2577CC93867FE7FA79EF3FF75CA768269A3EC79FF55FD8ACE6ABB170A118C0590210A5E855775D2E7FDB76C3DFD5F276DCE7F05AF82F33244686604620E20E611D177569371CBBDAD9634EB3F90BEC4A7E5A0021287CA33E2328013884581580E88D5B9A5345DC4ED92F77148A8D883F8507151A83A300000A64934D68A5D62BC0000000049454E44AE426082$)
+            img_down! = BBjAPI().getSysGui().getImageManager().loadImageFromBytes($89504E470D0A1A0A0000000D4948445200000008000000080806000000C40FBE8B000000097048597300000B1300000B1301009A9C1800000092494441541895558E3B0A02511004EBCDDB1F269EC17431130CD5C8DCCCD3081EC5C0D4D840F016C6861E4159963259611D18186ABAE926886345D5AA8C1798077100D803FE092000811D2A15B46311204D331B6E562A14C566703981C5F05C137026E2A132ADD952964B158267264EA824905C5C4711F744BC55C6AD4D994B865B417C7E3C18464DA98F4E7875F6F58F7F01E257639995CBE9540000000049454E44AE426082$)
             #dropButton!.setImage(img_down!)   
             
             #grid! = #frame!.addGrid(102,0,h+1,w,h2)
@@ -169,6 +173,13 @@ class public BBjMultiListButtonWidget extends BBjWidget
            #grid!.deselectAllCells()
     methodend
 
+
+    REM /**
+    REM  * 
+    REM  * Sets the height of the dropdown grid
+    REM  * @param BBjNumber h the height in pixels
+    REM  * 
+    REM  */
     method public void setOpenHeight(BBjNumber h)
         #h2= h
         #grid!.setSize(#getWidth(),h)
@@ -196,18 +207,7 @@ class public BBjMultiListButtonWidget extends BBjWidget
             #grid!.setCellState(row,0,!state)
             text$=#grid!.getCellText(row,2)
 
-            v!=new BBjVector()
-            #displayString$=""
-            for i=0 to #grid!.getNumRows()-1
-                if #grid!.getCellState(i,0) then
-                    if #displayString$>""
-                        #displayString$=#displayString$+", "
-                    fi
-                    #displayString$=#displayString$+#grid!.getCellText(i,2)
-                    v!.addItem(i)
-                fi
-            next i
-            #editArea!.setText(#displayString$)
+            #updateEditArea()
 
             declare BBjMultiListButtonWidgetSelChangeEvent ev!
 
@@ -217,6 +217,40 @@ class public BBjMultiListButtonWidget extends BBjWidget
             ev!.setControl(#frame!)
 
             #fireEvent(#ON_LBEX_SELCHANGE(),ev!)
+    methodend
+    
+    method private void updateEditArea()
+            v!=new BBjVector()
+            #displayString$=""
+            if #getText()="" then
+                for i=0 to #grid!.getNumRows()-1
+                    if #grid!.getCellState(i,0) then
+                        if #displayString$>""
+                            #displayString$=#displayString$+", "
+                        fi
+                        #displayString$=#displayString$+#grid!.getCellText(i,2)
+                        v!.addItem(i)
+                    fi
+                next i
+            else
+               #displayString$=#getText()
+               if pos("{1}"=#displayString$)>0 then
+                    sel=0
+                    if #grid!.getNumRows() >0 then
+                        for i=0 to #grid!.getNumRows()-1
+                            if #grid!.getCellState(i,0) then
+                                sel=sel+1
+                            fi
+                        next
+                    fi
+                    #displayString$=#displayString$(1,pos("{1}"=#displayString$)-1)+str(sel)+#displayString$(pos("{1}"=#displayString$)+3)
+                fi
+                if pos("{2}"=#displayString$)>0 then
+                    #displayString$=#displayString$(1,pos("{2}"=#displayString$)-1)+str(#grid!.getNumRows())+#displayString$(pos("{2}"=#displayString$)+3)
+                fi
+            fi 
+            #editArea!.setText(#displayString$)    
+    
     methodend
     
     REM /**
@@ -275,9 +309,61 @@ class public BBjMultiListButtonWidget extends BBjWidget
             fi
             
             #editArea!.setText(#displayString$)
-            
-
     methodend
+
+    REM /**
+    REM  * 
+    REM  * Sets a text snippet to be used instead of simply listing the selected items in the edit area when closed
+    REM  * example: "{1} of {2} items selected..."
+    REM  * @param text$ the text with which the added item should be filled
+    REM  * 
+    REM  */
+    method public void setText(String text!)
+        #super!.setText(text!)
+        #updateEditArea()
+    methodend
+
+    REM /**
+    REM  * 
+    REM  * returns the unique control type
+    REM  * @returns int controlType = 65002
+    REM  * 
+    REM  */
+    method public int getControlType()
+        methodret 65002
+    methodend
+    
+    REM /**
+    REM  * 
+    REM  * Sets the font of all display pieces on screen
+    REM  * @param BBjFont font! 
+    REM  * 
+    REM  */    
+    method public void setFont(BBjFont p_font!)
+        #super!.setFont(p_font!)
+        #grid!.setFont(p_font!)
+        #editArea!.setFont(p_font!)
+    methodend   
+
+
+    REM /**
+    REM  * 
+    REM  * Specifies the vector of the items to be selected.
+    REM  * @param BBjVector the indices to select 
+    REM  * 
+    REM  */       
+    method public void setSelectedIndices(BBjVector v!)
+        if #grid!.getNumRows() >0 then
+            for i=0 to #grid!.getNumRows()-1
+                if v!.contains(i) then
+                    #grid!.setCellState(i,0,1)
+                else
+                    #grid!.setCellState(i,0,0)
+                fi
+            next
+        fi
+        #updateEditArea()
+    methodend 
 
 classend
 
