@@ -6,3 +6,6 @@ Here are some example screenshots showcasing how the Multilistbutton will look e
 choices selected.
 ![Alt-Text](https://raw.githubusercontent.com/BBj-Plugins/BBjMultiListButtonWidget/master/docs/screenshots/MultiList%201.PNG)
 ![Alt-Text](https://raw.githubusercontent.com/BBj-Plugins/BBjMultiListButtonWidget/master/docs/screenshots/MultiList%202.PNG)
+
+[Alt-Text](
+https://bbj-plugins.github.io/BBjMultiListButtonWidget/javadoc/)
