@@ -4,11 +4,11 @@ This code has been converted to a plug-in from old sample code. Volunteers welco
 
 Per default the ListButton is created without images as seen here:
 
-![Alt-Text](https://raw.githubusercontent.com/BBj-Plugins/BBjMultiListButtonWidget/master/docs/screenshots/MultiList%201.PNG)
+![image](https://user-images.githubusercontent.com/4833070/54194696-23b3bb80-44bd-11e9-9b3d-de8e5fe109de.png)
 
-But the possibility to add images exists as seen here: 
+Optionally images can be added: 
 
-![Alt-Text](https://raw.githubusercontent.com/BBj-Plugins/BBjMultiListButtonWidget/master/docs/screenshots/MultiList%202.PNG)
+![image](https://user-images.githubusercontent.com/4833070/54194645-fff07580-44bc-11e9-8f83-474802ff2576.png)
 
 You can find further informations in the [javadoc](
 https://bbj-plugins.github.io/BBjMultiListButtonWidget/javadoc/).
