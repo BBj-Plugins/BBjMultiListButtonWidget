@@ -14,11 +14,16 @@ ce2! = wnd!.addCEdit(202,260,200,200,200,"Events (Car Brands)")
 btn! = wnd!.addButton(300,10,100,60,22,"select #1 and #3")
 btn!.setCallback(BBjAPI.ON_BUTTON_PUSH,"selectItems")
 
+rem showing a regular BBjListButton for style comparison
+REM declare auto BBjListButton lb!
+REM lb! = wnd!.addListButton(500,260,40,220,300,"Regular BBjListButton")
+REM lb!.setFieldHeight(25)
+
 declare BBjMultiListButtonWidget lbex!
 lbex! = new BBjMultiListButtonWidget(wnd!,100,10,10,220,25)
-lbex!.addItem("English",1,img_en!)
-lbex!.addItem("German",0,img_de!)
-lbex!.addItem("French",0,img_fr!)
+lbex!.addItem("English",1)
+lbex!.addItem("German")
+lbex!.addItem("French")
 
 lbex!.setFont(BBjAPI().getSysGui().makeFont("PT Sans",7,BBjFont.FONT_BOLD))
 lbex!.setText("{1} of {2} selected.")
@@ -47,6 +52,7 @@ lbex2!.setShowImageColumn(1)
 foo! = new someClass()
 foo!.setEd(ce2!)
 lbex2!.setCallback(lbex!.ON_LBEX_SELCHANGE(),foo!,"updateList")
+
 
 
 process_events
