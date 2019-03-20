@@ -139,6 +139,7 @@ class public BBjMultiListButtonWidget extends BBjWidget
         #frame!.setSize(#getWidth(),#getHeight()+#h2)
         #f_open=1
         #grid!.deselectAllCells()
+        #grid!.focus()
     methodend
 
     method public void onLBOpen( BBjListOpenEvent ev! )
