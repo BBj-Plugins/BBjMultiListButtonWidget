@@ -127,6 +127,7 @@ class public BBjMultiListButtonWidget extends BBjWidget
     REM  *
     REM  */
     method public void doClose(BBjEvent ev!)
+        #editArea!.closeList()
         #frame!.setSize(#getWidth(),#getHeight())
         #f_open=0
     methodend
@@ -136,6 +137,7 @@ class public BBjMultiListButtonWidget extends BBjWidget
     REM  *
     REM  */
     method public void doOpen(BBjEvent ev!)
+        #editArea!.closeList()
         #frame!.setSize(#getWidth(),#getHeight()+#h2)
         #f_open=1
         #grid!.deselectAllCells()
