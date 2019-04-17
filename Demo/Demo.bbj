@@ -11,8 +11,12 @@ gosub loadImages
 ce!  = wnd!.addCEdit(102,10,200,200,200,"Events (Languages)")
 ce2! = wnd!.addCEdit(202,260,200,200,200,"Events (Car Brands)")
 
-btn! = wnd!.addButton(300,10,100,60,22,"select #1 and #3")
+btn! = wnd!.addButton(300,10,100,200,22,"select #1 and #3")
 btn!.setCallback(BBjAPI.ON_BUTTON_PUSH,"selectItems")
+
+btn! = wnd!.addButton(301,10,130,200,22,"get Selected Indices")
+btn!.setCallback(BBjAPI.ON_BUTTON_PUSH,"getSelectedItems")
+
 
 rem showing a regular BBjListButton for style comparison
 REM declare auto BBjListButton lb!
@@ -74,6 +78,10 @@ selectItems:
 return
 
 
+getSelectedItems:
+    msg$ = str(lbex!.getSelectedIndices())
+    a=msgbox(msg$,0,"selected indices are:")
+return
 
 class public someClass
 

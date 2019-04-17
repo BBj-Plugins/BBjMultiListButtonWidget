@@ -13,6 +13,8 @@ class public BBjMultiListButtonWidget extends BBjWidget
     field private BBjString         displayString$
     field private BBjString         selChangeEvent$
     field private BBjNumber         f_showImageColumn = 0
+    field private BBjVector         selectedItems! = new BBjVector()
+    field private BBjVector         listItems! = new BBjVector()
     rem --------------------- constructors -------------------------------------
     rem /**
     rem  * disabled default constructor
@@ -177,7 +179,14 @@ class public BBjMultiListButtonWidget extends BBjWidget
         row=ev!.getRow()
         state=#grid!.getCellState(row,0)
         #grid!.setCellState(row,0,!state)
+        if (state) then
+            #selectedItems!.remove( #selectedItems!.indexOf(row))
+        else
+            #selectedItems!.add(row)
+        fi
+        
         text$=#grid!.getCellText(row,2)
+        
         #updateEditArea()
 
         declare BBjMultiListButtonWidgetSelChangeEvent ev!
@@ -187,36 +196,31 @@ class public BBjMultiListButtonWidget extends BBjWidget
         ev!.setSelectedString(#displayString$)
         ev!.setControl(#frame!)
         #fireEvent(#ON_LBEX_SELCHANGE(),ev!)
+        
     methodend
 
     method private void updateEditArea()
         v!=new BBjVector()
         #displayString$=""
-        for i=0 to #grid!.getNumRows()-1
-            if #grid!.getCellState(i,0) then
-                if #displayString$>""
-                    #displayString$=#displayString$+", "
+        
+        if #listItems!.size() then
+            for i=0 to #listItems!.size()-1
+                if #selectedItems!.contains(i) then
+                    if #displayString$>""
+                        #displayString$=#displayString$+", "
+                    FI
+    
+                    #displayString$=#displayString$+#listItems!.get(i)
+                    v!.addItem(i)
                 FI
-
-                #displayString$=#displayString$+#grid!.getCellText(i,2)
-                v!.addItem(i)
-            FI
-        next i
-
+            next i
+        fi
+        
         if #getText()>"" then
             #displayString$=#getText()
 
             if pos("{1}"=#displayString$)>0 then
-                sel=0
-
-                if #grid!.getNumRows() >0 then
-                    for i=0 to #grid!.getNumRows()-1
-                        if #grid!.getCellState(i,0) then
-                            sel=sel+1
-                        FI
-                    next
-                FI
-
+                sel=#selectedItems!.size()
                 #displayString$=#displayString$(1,pos("{1}"=#displayString$)-1)+str(sel)+#displayString$(pos("{1}"=#displayString$)+3)
             FI
 
@@ -230,7 +234,8 @@ class public BBjMultiListButtonWidget extends BBjWidget
                 #editArea!.setText("")
                 break
             case 1
-                #editArea!.setText(#grid!.getCellText(v!.getItem(0),2))
+                i=v!.getItem(0)
+                #editArea!.setText(str(#listItems!.get(i)))
                 break
             case default
                 #editArea!.setText(#displayString$)
@@ -297,9 +302,11 @@ class public BBjMultiListButtonWidget extends BBjWidget
             FI
 
             #displayString$=#displayString$+text$
+            
+            #selectedItems!.add(rows)
         FI
-
-        #editArea!.setText(#displayString$)
+        #listItems!.add(text$)
+        
     methodend
     REM /**
     REM  *
@@ -348,7 +355,7 @@ class public BBjMultiListButtonWidget extends BBjWidget
                 FI
             next
         FI
-
+        #selectedItems! = v!
         #updateEditArea()
     methodend
     REM /**
@@ -358,17 +365,7 @@ class public BBjMultiListButtonWidget extends BBjWidget
     REM  *
     REM  */
     method public BBjVector getSelectedIndices()
-        v!=new BBjVector()
-
-        if #grid!.getNumRows() >0 then
-            for i=0 to #grid!.getNumRows()-1
-                if #grid!.getCellState(i,0) then
-                    v!.addItem(i)
-                FI
-            next i
-        FI
-
-        methodret v!
+        methodret #selectedItems!
     methodend
 
 classend
