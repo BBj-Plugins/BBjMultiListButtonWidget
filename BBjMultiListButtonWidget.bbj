@@ -8,6 +8,8 @@ class public BBjMultiListButtonWidget extends BBjWidget
     field private BBjListButton     editArea!
     field private BBjButton         dropButton!
     field private BBjStandardGrid   grid!
+    field private BBjEditBox        filterbox!
+    field private BBjButton         selectAllLink!
     field private BBjNumber         h2
     field private BBjNumber         f_open
     field private BBjString         displayString$
@@ -15,6 +17,10 @@ class public BBjMultiListButtonWidget extends BBjWidget
     field private BBjNumber         f_showImageColumn = 0
     field private BBjVector         selectedItems! = new BBjVector()
     field private BBjVector         listItems! = new BBjVector()
+
+    field public  BBjNumber          ShowSelectAllLink
+    field public  BBjNumber          ShowFilter
+    
     rem --------------------- constructors -------------------------------------
     rem /**
     rem  * disabled default constructor
@@ -45,14 +51,17 @@ class public BBjMultiListButtonWidget extends BBjWidget
     rem  * @param Boolean f_init!: if TRUE the control is rendered for the first time so this method has to perform initial rendering
     rem  */
     method public void redraw(Boolean f_init!)
+
+            w = #getWidth()
+            h = #getHeight()
+
         if (f_init!) then
+            f_init!=BBjAPI.FALSE
             rem rendering for the first time
             rem so have to initialize / create my controls
             white! = BBjAPI().makeColor(255,255,255)
             #h2 = 300
             #f_open=false
-            w = #getWidth()
-            h = #getHeight()
             h2 = #h2
             #frame! = #getCanvas()
             #editArea! = #frame!.addListButton(100,0,0,w,1,"")
@@ -92,8 +101,52 @@ class public BBjMultiListButtonWidget extends BBjWidget
             #grid!.setCallback(#grid!.ON_GRID_SELECT_ROW,#this!,"gridSelectRow")
             #grid!.deselectAllCells()
             #grid!.setFitToGrid(1)
+            
+            #filterbox! = #frame!.addEditBox(500,0,h+1,w,22,"")
+            #filterbox!.setPlaceholder("Search")
+            #filterbox!.setVisible(0)
+            #filterbox!.setCallback(BBjAPI.ON_GAINED_FOCUS,#this!,"filterBoxGotFocus")
+            #filterbox!.setCallback(BBjAPI.ON_LOST_FOCUS,#this!,"filterBoxLostFocus")
+            #filterbox!.setCallback(BBjAPI.ON_EDIT_MODIFY,#this!,"filterBoxEdit")
+
+            
+            #selectAllLink! = #frame!.addButton(501,0,h+1,w,22,"Select All")
+            #selectAllLink!.setVisible(0)
+            #selectAllLink!.setFocusable(0)
+            
         FI
+        
+        if #ShowFilter > 0 then
+            #filterbox!.setVisible(1)
+            plus=22
+        else
+            #filterbox!.setVisible(0)
+        fi
+
+        #selectAllLink!.setLocation(0,h+1+plus)
+        
+        if #ShowSelectAllLink > 0 then
+            #selectAllLink!.setVisible(1)
+            plus = plus+22
+        else
+            #selectAllLink!.setVisible(0)
+        fi
+        
+        #grid!.setLocation(0,h+1+plus)
+        #grid!.setSize(w,#h2-plus)
+        
     methodend
+
+    method public void setShowFilter(BBjNumber f_show)
+        #ShowFilter = f_show
+        #redraw(BBjAPI.FALSE)
+    methodend
+
+    method public void setShowSelectAllLink(BBjNumber f_show)
+        #ShowSelectAllLink = f_show
+        #redraw(BBjAPI.FALSE)
+    methodend
+
 
     method public void setShowImageColumn(BBjNumber f_show)
         if (f_show) then
@@ -121,6 +174,7 @@ class public BBjMultiListButtonWidget extends BBjWidget
             #doClose(ev!)
         else
             #doOpen(ev!)
+            #grid!.focus()
         FI
     methodend
     REM /**
@@ -143,12 +197,15 @@ class public BBjMultiListButtonWidget extends BBjWidget
         #frame!.setSize(#getWidth(),#getHeight()+#h2)
         #f_open=1
         #grid!.deselectAllCells()
-        #grid!.focus()
+        
+        #filterbox!.setText("")
+        
     methodend
 
     method public void onLBOpen( BBjListOpenEvent ev! )
         #editArea!.closeList()
         #doOpen(ev!)
+        #grid!.focus()
     methodend
     REM /**
     REM  *
@@ -162,8 +219,40 @@ class public BBjMultiListButtonWidget extends BBjWidget
     methodend
 
     method public void gridLostFocus(BBjEvent ev!)
-        #doClose(ev!)
-        BBjAPI().getSysGui().flushEvents()
+        if #frame!.getFocusedControlID()<>500 then
+            #doClose(ev!)
+        fi
+    methodend
+
+
+    method public void filterBoxLostFocus(BBjEvent ev!)
+        if #frame!.getFocusedControlID()<>102 then
+            #doClose(ev!)
+        fi
+    methodend
+
+    
+    method public void filterBoxGotFocus(BBjEvent ev!)
+        #doOpen(ev!)
+        #filterbox!.focus()
+        rem BBjAPI().getSysGui().flushEvents()
+    methodend
+    
+    method public void filterBoxEdit(BBjEditModifyEvent ev!)
+       #applyFilter(ev!.getText())
+    methodend
+
+    method private void applyFilter(BBjString text$)
+    listItems! = #listItems!
+    grid! = #grid!
+    h=#getHeight()
+        for i=0 to listItems!.size()-1
+            if pos(cvs(text$,4)=cvs(listItems!.get(i),4)) = 0 then
+                grid!.setRowHeight(i,0)
+            else
+                grid!.setRowHeight(i,h+4)
+            fi
+        next
     methodend
 
     method public void gridSelectRow(BBjGridSelectRowEvent ev!)
@@ -306,7 +395,7 @@ class public BBjMultiListButtonWidget extends BBjWidget
             #selectedItems!.add(rows)
         FI
         #listItems!.add(text$)
-        
+        #updateEditArea()
     methodend
     REM /**
     REM  *

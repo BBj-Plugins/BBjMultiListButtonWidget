@@ -1,0 +1,31 @@
+use ::BBjMultiListButtonWidget/BBjMultiListButtonWidget.bbj::BBjMultiListButtonWidget
+use ::BBjMultiListButtonWidget/BBjMultiListButtonWidget.bbj::BBjMultiListButtonWidgetSelChangeEvent
+
+sysgui! = BBjAPI().openSysGui("X0")
+wnd!=sysgui!.addWindow(10,10,800,600,"")
+wnd!.setCallback(wnd!.ON_CLOSE,"byebye")
+
+print 'hide'
+declare BBjMultiListButtonWidget lbex!
+lbex! = new BBjMultiListButtonWidget(wnd!,100,10,10,220,25)
+SQLOPEN (1)"CDStore"
+SQLPREP (1)"SELECT TITLE FROM CDINVENTORY"
+SQLEXEC (1)
+dim rec$:SQLTMPL(1)
+while 1
+    rec$=sqlfetch(1,end=*break)
+    lbex!.addItem(rec.title$,1)
+wend
+
+lbex!.setShowFilter(1)
+REM lbex!.setShowSelectAllLink(1)
+
+REM lbex!.setFont(BBjAPI().getSysGui().makeFont("PT Sans",7,BBjFont.FONT_BOLD))
+REM lbex!.setText("{1} of {2} selected.")
+
+
+
+process_events
+
+byebye:bye
+
