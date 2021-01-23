@@ -17,6 +17,7 @@ class public BBjMultiListButtonWidget extends BBjWidget
     field private BBjNumber         f_showImageColumn = 0
     field private BBjVector         selectedItems! = new BBjVector()
     field private BBjVector         listItems! = new BBjVector()
+    field private BBjNumber         isEditable! = 1
 
     field public  BBjNumber          ShowSelectAllLink
     field public  BBjNumber          ShowFilter
@@ -264,27 +265,32 @@ class public BBjMultiListButtonWidget extends BBjWidget
     REM  *
     REM  */
     method public void gridMouseDown(BBjGridMouseDownEvent ev!)
-        #grid!.deselectAllCells()
-        row=ev!.getRow()
-        state=#grid!.getCellState(row,0)
-        #grid!.setCellState(row,0,!state)
-        if (state) then
-            #selectedItems!.remove( #selectedItems!.indexOf(row))
-        else
-            #selectedItems!.add(row)
-        fi
         
-        text$=#grid!.getCellText(row,2)
-        
-        #updateEditArea()
-
-        declare BBjMultiListButtonWidgetSelChangeEvent ev!
-
-        ev! = new BBjMultiListButtonWidgetSelChangeEvent()
-        ev!.setSelected(v!)
-        ev!.setSelectedString(#displayString$)
-        ev!.setControl(#frame!)
-        #fireEvent(#ON_LBEX_SELCHANGE(),ev!)
+        if #isEditable! then
+    
+            #grid!.deselectAllCells()
+            row=ev!.getRow()
+            state=#grid!.getCellState(row,0)
+            #grid!.setCellState(row,0,!state)
+            if (state) then
+                #selectedItems!.remove( #selectedItems!.indexOf(row))
+            else
+                #selectedItems!.add(row)
+            fi
+            
+            text$=#grid!.getCellText(row,2)
+            
+            #updateEditArea()
+    
+            declare BBjMultiListButtonWidgetSelChangeEvent ev!
+    
+            ev! = new BBjMultiListButtonWidgetSelChangeEvent()
+            ev!.setSelected(v!)
+            ev!.setSelectedString(#displayString$)
+            ev!.setControl(#frame!)
+            #fireEvent(#ON_LBEX_SELCHANGE(),ev!)
+            
+        endif
         
     methodend
 
@@ -330,6 +336,8 @@ class public BBjMultiListButtonWidget extends BBjWidget
                 #editArea!.setText(#displayString$)
                 break
         swend
+        
+        #editArea!.setToolTipText(#displayString$)
     methodend
     REM /**
     REM  *
@@ -455,6 +463,19 @@ class public BBjMultiListButtonWidget extends BBjWidget
     REM  */
     method public BBjVector getSelectedIndices()
         methodret #selectedItems!
+    methodend
+    
+    REM /**
+    REM  * 
+    REM  * Setting setEditable=false sets the control
+    REM  * in a state that the drop down can be opened
+    REM  * and reviewed, but the selection cannot be 
+    REM  * changed
+    REM  * 
+    REM  * @param BBjNumber editable! (0/1)  
+    REM  */
+    method public void setEditable(BBjNumber ed!)
+        #isEditable! = ed!
     methodend
 
 classend
